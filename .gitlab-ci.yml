@@ -1,0 +1,80 @@
+stages:
+  - build
+  - dbupgrade
+  - deploy
+
+variables:
+    IMGNAMEPROD: "gratus_api_master"
+    CONTNAMEPROD: "gratus_api_master"
+    IMGNAMEPRODWEB: "gratus_web_master"
+    CONTNAMEPRODWEB: "gratus_web_master"    
+    URL_APP: "gratus.envionsoftware.com"
+    DB_NETWORK: "db"
+    WEB_NETWORK: "gratusweb"
+
+build-api-master:
+  stage: build
+  tags: 
+    - hetz
+    - web01
+  only:
+    - develop
+  script:
+    - echo $CI_PROJECT_DIR
+    - sed -i "s|DB_HOST=mysql|DB_HOST=db|g" ./.env
+    - sed -i "s|APP_URL=http://localhost|APP_URL=https://$URL_APP|g" ./.env
+    - sed -i "s|DB_USERNAME=root|DB_USERNAME=gratus|g" ./.env
+    - sed -i "s|DB_PASSWORD=srpassword|DB_PASSWORD=ZyUqDMe3XprYg4y2s|g" ./.env
+    - sed -i "s|APP_FORCED_HTTPS=0|APP_FORCED_HTTPS=1|g" ./.env
+    - docker build -t $IMGNAMEPROD .
+
+build-web-master:
+  stage: build
+  tags: 
+    - hetz
+    - web01
+  only:
+    - develop
+  script:
+    - echo $CI_PROJECT_DIR
+    - docker build -t $IMGNAMEPRODWEB -f Dockerfile_nginx .
+
+dbupgrade-master:
+  stage: dbupgrade
+  tags:
+    - hetz
+    - web01
+  only:
+    - develop
+  script:
+    - echo $CI_PROJECT_DIR
+    #- docker container run -i --rm --name ${IMGNAMEPROD}_DB_upgrade --network $DB_NETWORK $IMGNAMEPROD php artisan db:wipe
+    - docker container run -i --rm --name ${IMGNAMEPROD}_DB_upgrade --network $DB_NETWORK $IMGNAMEPROD php artisan migrate 
+    #- docker container run -i --rm --name ${IMGNAMEPROD}_DB_upgrade --network $DB_NETWORK $IMGNAMEPROD php artisan optimize
+    #- docker container run -i --rm --name ${IMGNAMEPROD}_DB_upgrade --network $DB_NETWORK $IMGNAMEPROD php artisan cache:clear
+    #- docker container run -i --rm --name ${IMGNAMEPROD}_DB_upgrade --network $DB_NETWORK $IMGNAMEPROD php artisan route:clear
+    #- docker container run -i --rm --name ${IMGNAMEPROD}_DB_upgrade --network $DB_NETWORK $IMGNAMEPROD php artisan view:clear
+    #- docker container run -i --rm --name ${IMGNAMEPROD}_DB_upgrade --network $DB_NETWORK $IMGNAMEPROD php artisan config:clear
+
+deploy-master:
+  stage: deploy
+  tags:
+    - hetz
+    - web01
+  only:
+    - develop
+  before_script:
+    - if [ "$(docker inspect -f '{{.State.Running}}' $CONTNAMEPROD 2>/dev/null)" = "true" ]; then docker rm -f $CONTNAMEPROD;  fi
+    - if [ "$(docker inspect -f '{{.State.Status}}' $CONTNAMEPROD 2>/dev/null)" = "exited" ]; then docker rm -f $CONTNAMEPROD;  fi
+    - if [ "$(docker inspect -f '{{.State.Running}}' $CONTNAMEPRODWEB 2>/dev/null)" = "true" ]; then docker rm -f $CONTNAMEPRODWEB;  fi
+    - if [ "$(docker inspect -f '{{.State.Status}}' $CONTNAMEPRODWEB 2>/dev/null)" = "exited" ]; then docker rm -f $CONTNAMEPRODWEB;  fi
+
+  script: 
+    - docker container run -d --name $CONTNAMEPROD -e https=1 --restart=always --net-alias gratus-api --network=$DB_NETWORK $IMGNAMEPROD
+    - docker network connect --alias gratus-api $WEB_NETWORK $CONTNAMEPROD 
+    - docker container run -d -p 8083:80 --name $CONTNAMEPRODWEB -e https=1 --restart=always --net-alias gratus-web --network=$WEB_NETWORK $IMGNAMEPRODWEB
+    # 
+    - docker exec -i gratus_api_master php artisan optimize
+    - docker exec -i gratus_api_master php artisan key:generate
+    - docker exec -i gratus_api_master composer update
+
