@@ -27,6 +27,7 @@ class TransactionsController extends Controller
                 $find_user_role = 'tipper_id';
             }
             else {
+                $model = 'Receiver';
                 $payment_role = 'Tipper';
                 $find_user_role = 'receiver_id';
             }
