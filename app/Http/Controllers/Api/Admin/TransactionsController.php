@@ -21,13 +21,14 @@ class TransactionsController extends Controller
         {
             $user = null;
             $transactions = null;
+            $payment_role = null;
 
             if ( strtolower($model) == 'tipper' ) {
                 $model = 'Tipper';
                 $payment_role = 'Receiver';
                 $find_user_role = 'tipper_id';
             }
-            else {
+            elseif ( strtolower($model) == 'receiver' ) {
                 $model = 'Receiver';
                 $payment_role = 'Tipper';
                 $find_user_role = 'receiver_id';

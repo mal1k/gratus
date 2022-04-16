@@ -125,6 +125,7 @@
                 <!--end::Table head-->
                 <!--begin::Table body-->
                 <tbody>
+                @isset ( $transactions )
                 @foreach ( $transactions as $transaction )
                     <?php
                         $receiver_model = '\App\Models\Receiver';
@@ -198,6 +199,7 @@
                         </td>
                     </tr>
                 @endforeach
+                @endisset
                 </tbody>
                 <!--end::Table body-->
             </table>
