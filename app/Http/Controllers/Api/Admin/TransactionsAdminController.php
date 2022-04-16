@@ -22,7 +22,7 @@ class TransactionsAdminController extends Controller
     public function index()
         {
             $transactions = Transactions::orderBy('id', 'desc')->paginate(15);
-            $transactions_list = null;
+            $transactions_list = [];
             $i = 0;
 
             foreach ( $transactions as $transaction ):
