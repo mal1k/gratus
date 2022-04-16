@@ -20,6 +20,8 @@ class TransactionsController extends Controller
     public function index($name, $model = null, $tipper_id = null)
         {
             $tipper = null;
+            $transactions = null;
+
             if ( $model == 'Tipper' )
                 $payment_role = 'Receiver';
             else
@@ -30,10 +32,13 @@ class TransactionsController extends Controller
             if ( $model ) {
                 $model = '\App\Models\\'.$model;
                 $tipper = $model::where(['id' => $tipper_id])->first();
-                $transactions = Transactions::where('org_id', '=', $org->id)
-                    ->where(['user_id' => $tipper->id])
-                    ->orderBy('id', 'desc')
-                    ->paginate(15);
+
+                if ( !empty($tipper->ID) )
+                    $transactions = Transactions::where('org_id', '=', $org->id)
+                        ->where(['user_id' => $tipper->id])
+                        ->orderBy('id', 'desc')
+                        ->paginate(15);
+
             } else
                 $transactions = Transactions::where('org_id', '=', $org->id)
                     ->orderBy('id', 'desc')
