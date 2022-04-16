@@ -17,34 +17,37 @@ use Illuminate\Support\Facades\URL;
 
 class TransactionsController extends Controller
 {
-    public function index($name, $model = null, $tipper_id = null)
+    public function index($name, $model = null, $user_id = null)
         {
-            $tipper = null;
+            $user = null;
             $transactions = null;
 
-            if ( $model == 'Tipper' )
+            if ( $model == 'Tipper' ) {
                 $payment_role = 'Receiver';
-            else
+                $find_user_role = 'tipper_id';
+            }
+            else {
                 $payment_role = 'Tipper';
+                $find_user_role = 'receiver_id';
+            }
 
             $org = Organization::where('slug', '=', $name)->first();
 
             if ( $model ) {
                 $model = '\App\Models\\'.$model;
-                $tipper = $model::where(['id' => $tipper_id])->first();
+                $user = $model::where(['id' => $user_id])->first();
 
-                if ( !empty($tipper->ID) )
+                if ( !empty($user->id) )
                     $transactions = Transactions::where('org_id', '=', $org->id)
-                        ->where(['user_id' => $tipper->id])
+                        ->where([$find_user_role => $user->id])
                         ->orderBy('id', 'desc')
                         ->paginate(15);
-
             } else
                 $transactions = Transactions::where('org_id', '=', $org->id)
                     ->orderBy('id', 'desc')
                     ->paginate(15);
 
-            return view('organization.transactions.dashboard', compact('org', 'transactions', 'tipper', 'payment_role'));
+            return view('organization.transactions.dashboard', compact('org', 'transactions', 'user', 'payment_role'));
 
             return response()->json([
                 'items' => $transactions->getCollection()->map(function($item) {

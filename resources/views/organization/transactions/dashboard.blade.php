@@ -2,9 +2,9 @@
 
 @section('content')
 
-@isset ( $tipper )
+@isset ( $user )
     @section('title')
-        {{ $tipper->first_name . ' ' . $tipper->last_name }} Transactions history
+        {{ $user->first_name . ' ' . $user->last_name }} Transactions history
     @endsection
 @else
     @section('title', 'Transactions')
@@ -17,7 +17,7 @@
         <div class="table-responsive">
             <!--begin::Table-->
 
-        @isset ( $tipper )
+        @isset ( $user )
             <table class="table align-middle gs-0 gy-4">
                 <!--begin::Table head-->
                 <thead>
@@ -48,11 +48,11 @@
                             <td>
                                 <?php
                                     if ( $payment_role == 'Receiver' ) {
-                                        $model = '\App\Models\\'.$transaction->model;
-                                        $user = $model::find($transaction->user_id);
-                                    } else {
-                                        $model = '\App\Models\\'.$payment_role;
+                                        $model = '\App\Models\Receiver';
                                         $user = $model::find($transaction->receiver_id);
+                                    } else {
+                                        $model = '\App\Models\Tipper';
+                                        $user = $model::find($transaction->tipper_id);
                                     }
                                 ?>
                                 <span class="text-dark fw-bolder d-block mb-1 fs-6">{{ $user->first_name ?? '' }} {{ $user->last_name ?? '' }}</span>
@@ -130,8 +130,8 @@
                         $receiver_model = '\App\Models\Receiver';
                         $receiver = $receiver_model::find($transaction->receiver_id);
 
-                        $tipper_model = '\App\Models\Tipper';
-                        $tipper = $tipper_model::find($transaction->tipper_id);
+                        $user_model = '\App\Models\Tipper';
+                        $user = $user_model::find($transaction->user_id);
                     ?>
                     <tr>
                         <td>
@@ -142,7 +142,7 @@
                             </div>
                         </td>
                         <td>
-                            <span class="text-dark fw-bolder d-block mb-1 fs-6">{{ $tipper->first_name ?? '' }} {{ $tipper->last_name ?? '' }}</span>
+                            <span class="text-dark fw-bolder d-block mb-1 fs-6">{{ $user->first_name ?? '' }} {{ $user->last_name ?? '' }}</span>
                         </td>
                         <td>
                             <span class="text-dark fw-bolder d-block mb-1 fs-6">{{ $receiver->first_name ?? '' }} {{ $receiver->last_name ?? '' }}</span>
