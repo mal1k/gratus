@@ -72,8 +72,6 @@ class Overview extends React.Component
                     return response.json();
                 })
                 .then(data => {
-                    console.dir(data);
-
                     this.setState({
                         item: data,
                         isRendered: true
@@ -83,8 +81,7 @@ class Overview extends React.Component
         }
     }
 
-    render()
-    {
+    render() {
         const {
             item,
             isRendered,
@@ -92,6 +89,36 @@ class Overview extends React.Component
         } = this.state;
         const backLinkTo = "/manager/receivers";
         let headerText = "The receiver #" + this.props.match.params.id;
+
+        const transactions = item.transactions ?
+            item.transactions.map((transaction) => {
+                const transactionDate = new Date(transaction.created_at);
+
+                const day = transactionDate.getDate(),
+                    transactionDay = (day < 10) ? `0${day}` : day;
+
+                const month = transactionDate.getMonth() + 1,
+                    transactionMonth = (month < 10) ? `0${month}` : month;
+
+                const year = transactionDate.getFullYear();
+                const hours = transactionDate.getHours(),
+                    transactionHours = (hours < 10) ? `0${hours}` : hours;
+
+                const minutes = transactionDate.getMinutes(),
+                    transactionMinutes = (minutes < 10) ? `0${minutes}` : minutes;
+
+                const dateFormat = `${transactionDay}/${transactionMonth}/${year} ${transactionHours}:${transactionMinutes}`;
+                return (
+                    <tr key={transaction.transaction_id}>
+                        <th scope="row">{ transaction.transaction_id }</th>
+                        <td>{ `${transaction.first_name} ${transaction.last_name}` }</td>
+                        <td>{ transaction.org_name }</td>
+                        <td>{ transaction.status }</td>
+                        <td>{ transaction.amount }</td>
+                        <td>{ dateFormat }</td>
+                    </tr>
+                )
+        }) : new Array();
 
         let content = (
             <>
@@ -119,29 +146,15 @@ class Overview extends React.Component
                     <thead>
                         <tr>
                             <th scope="col">#</th>
-                            <th scope="col">First</th>
-                            <th scope="col">Last</th>
-                            <th scope="col">Handle</th>
+                            <th scope="col">Tipper</th>
+                            <th scope="col">Organization</th>
+                            <th scope="col">Status</th>
+                            <th scope="col">Amount</th>
+                            <th scope="col">Date and time</th>
                         </tr>
                     </thead>
                     <tbody>
-                        <tr>
-                            <th scope="row">1</th>
-                            <td>Mark</td>
-                            <td>Otto</td>
-                            <td>@mdo</td>
-                        </tr>
-                        <tr>
-                            <th scope="row">2</th>
-                            <td>Jacob</td>
-                            <td>Thornton</td>
-                            <td>@fat</td>
-                        </tr>
-                        <tr>
-                            <th scope="row">3</th>
-                            <td colSpan="2">Larry the Bird</td>
-                            <td>@twitter</td>
-                        </tr>
+                        {transactions}
                     </tbody>
                 </table>
             </div>
@@ -160,7 +173,7 @@ class Overview extends React.Component
                                 data-object="expandable"
                             >
                                 <FontAwesomeIcon
-                                    icon={ ["fas", "chevron-left"] }
+                                    icon={ ["fa", "chevron-left"] }
                                     size="1x" />
                                 <span>
                                     Back to all
@@ -176,7 +189,7 @@ class Overview extends React.Component
                                 { serverErrorMessage }
                             </span>
                             {/* <a href="/manager/organizations/providers/overview/1" class="btn btn-warning m-1">Service providers info</a> */}
-                            <a href="/manager/receivers" class="btn btn-danger m-1">View shift</a>
+                            <a href="/manager/receivers" className="btn btn-danger m-1">View shift</a>
                         </div>
 
                     </div>

@@ -22,7 +22,8 @@ use App\Models\{
     Organization,
     organizationgroups,
     Receiver,
-    ReceiverData
+    ReceiverData,
+    Transactions
 };
 use Carbon\Carbon;
 
@@ -144,6 +145,21 @@ class ReceiverController extends Controller
     public function show($id)
     {
         $receiver = Receiver::with(['receiverData', 'creditCard', 'bankAccount'])->find($id);
+        // Organization::
+        // Tipper::
+
+        // Organization
+
+        // Tipper: first_name, last_name
+        // Organization: name
+
+        // $receiver['transactions'] = Transactions::where(['receiver_id' => $receiver->id])->get();
+
+        $receiver['transactions'] = Transactions::where(['receiver_id' => $receiver->id])
+            ->leftJoin("tippers", "tippers.id", "=", "transactions.tipper_id")
+            ->leftJoin("organizations", "organizations.id", "=", "transactions.org_id")
+            ->get(['transactions.*', 'tippers.first_name', 'tippers.last_name', 'organizations.name as org_name']);
+
         if ( !empty($receiver->receiverData->birth_date) )
             $receiver->receiverData->birth_date = Carbon::parse($receiver->receiverData->birth_date)->format('m-d-Y');
         return response()->json($receiver);
