@@ -115,6 +115,8 @@ class Overview extends React.Component
                         <td>{ transaction.org_name }</td>
                         <td>{ transaction.status }</td>
                         <td>{ transaction.amount }</td>
+                        <td>{ transaction.stars !== null ? transaction.stars : "" }</td>
+                        <td>{ transaction.comment !== null ? transaction.comment : "" }</td>
                         <td>{ dateFormat }</td>
                     </tr>
                 )
@@ -150,6 +152,8 @@ class Overview extends React.Component
                             <th scope="col">Organization</th>
                             <th scope="col">Status</th>
                             <th scope="col">Amount</th>
+                            <th scope="col">Stars</th>
+                            <th scope="col">Comment</th>
                             <th scope="col">Date and time</th>
                         </tr>
                     </thead>
