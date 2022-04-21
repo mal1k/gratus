@@ -1186,9 +1186,11 @@ class AuthController extends Controller
 
             $tipper = Tipper::where([ 'id' => $feedback['tipper_id'] ])->first();
             if ( isset($tipper) ) {
-                $feedback_list[$i]['tipper']['first_name'] = $tipper['first_name'];
-                $feedback_list[$i]['tipper']['last_name'] = $tipper['last_name'];
-                $feedback_list[$i]['tipper']['photo'] = $tipper['photo'];
+                if ( empty($feedback['anon_transfer']) ) {
+                    $feedback_list[$i]['tipper']['first_name'] = $tipper['first_name'];
+                    $feedback_list[$i]['tipper']['last_name'] = $tipper['last_name'];
+                    $feedback_list[$i]['tipper']['photo'] = $tipper['photo'];
+                }
             }
 
             $i += 1;
