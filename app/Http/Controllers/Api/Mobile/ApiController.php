@@ -40,38 +40,37 @@ class ApiController extends Controller
 
     public function groupList()
     {
-        $list = organizationgroups::all();
+      $groupInfo = null;
+      $list = organizationgroups::all();
 
       // org name
       $i = 0;
       foreach ( $list as $group ):
         $org = Organization::find($group->org_id);
+        if ( !empty($org) ) {
+            $groupInfo[$i]['orgName'] = $org->name;
+            // group name
+            $groupInfo[$i]['groupName'] = $group->name;
 
-      if ( !empty($org) ) {
-        $groupInfo[$i]['orgName'] = $org->name;
-        // group name
-        $groupInfo[$i]['groupName'] = $group->name;
+            // users
+            $user_ids = null;
+            if ( !empty($group->users['group']['receivers']) ) {
+                $user_ids = $group->users['group']['receivers'];
 
-        // users
-        $user_ids = null;
-        if ( !empty($group->users['group']['receivers']) ) {
-            $user_ids = $group->users['group']['receivers'];
+                foreach ( $user_ids as $user_id ):
+                    $user = Receiver::where('id', $user_id)->first();
+                    if ( isset($user) ) {
+                        $groupInfo[$i]['users'][] = $user;
+                    }
+                endforeach;
+            }
+            if ( empty($groupInfo[$i]['users']) )
+                $groupInfo[$i]['users'][] = null;
 
-            foreach ( $user_ids as $user_id ):
-                $user = Receiver::where('id', $user_id)->first();
-                if ( isset($user) ) {
-                    $groupInfo[$i]['users'][] = $user;
-                }
-            endforeach;
+            $i += 1;
         }
-          if ( empty($groupInfo[$i]['users']) )
-              $groupInfo[$i]['users'][] = null;
-
-          $i += 1;
-      }
-
       endforeach;
-        return response()->json($groupInfo, 200);
+      return response()->json($groupInfo, 200);
     }
 
     /**
@@ -87,7 +86,7 @@ class ApiController extends Controller
      *     )
      * )
     */
- 
+
     public function getNotifications()
     {
         $list = PushNotification::all();
