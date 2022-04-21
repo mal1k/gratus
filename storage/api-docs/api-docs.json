@@ -6,7 +6,7 @@
     },
     "paths": {
         "/api/mobile/groupList": {
-            "post": {
+            "get": {
                 "tags": [
                     "Mobile"
                 ],
@@ -830,6 +830,53 @@
                 "responses": {
                     "200": {
                         "description": "Array of transactions. With this keys: 'transaction_id', 'tipper_id', 'amount', 'status'"
+                    },
+                    "406": {
+                        "description": "Unauthenticated."
+                    }
+                },
+                "security": [
+                    {
+                        "bearer": []
+                    }
+                ]
+            }
+        },
+        "/api/mobile/getFeedbackList": {
+            "post": {
+                "tags": [
+                    "Mobile"
+                ],
+                "summary": "Get Feedback List",
+                "description": "Comments in schema",
+                "operationId": "getFeedbackList",
+                "requestBody": {
+                    "description": "Choose model",
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [],
+                                "properties": {
+                                    "receiver_id": {
+                                        "description": "Choose receiver_id or set bearer token to header",
+                                        "type": "integer",
+                                        "example": 2
+                                    },
+                                    "date": {
+                                        "description": "Can be: empty or 'today'.",
+                                        "type": "string",
+                                        "example": ""
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Feedback array."
                     },
                     "406": {
                         "description": "Unauthenticated."

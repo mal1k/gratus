@@ -410,14 +410,14 @@ class AuthController extends Controller
             'abilities' => '["*"]',
             'token' => $token,
         ]);
-    
+
         if ( !empty($user) )
             Schedule::create([
                 'model'     => $model,
                 'user_id'   => $user->id,
                 'punch_in'  => date("Y-m-d H:i:s"),
                 'token'     => $token
-            ]);    
+            ]);
 
         if (!empty($user->email_verified_at))
             return response()->json([
@@ -948,10 +948,10 @@ class AuthController extends Controller
             }
             return response()->json($keys, 406);
         }
-        
+
         if ( $request->password != $request->repeat_password )
             return response()->json(['password' => 'The passwords should match.'], 406);
-        
+
         $answer = json_decode($request->getContent());
         $user = token_auth( get_token() );
         if ( empty($user->id) )
@@ -1124,6 +1124,77 @@ class AuthController extends Controller
             endforeach;
             return response()->json($amount, 200);
         endif;
+    }
+
+
+    /**
+     * @OA\Post(
+     * path="/api/mobile/getFeedbackList",
+     * summary="Get Feedback List",
+     * description="Comments in schema",
+     * operationId="getFeedbackList",
+     * tags={"Mobile"},
+     * security={ {"bearer": {} }},
+     *
+     * @OA\RequestBody(
+     *    required=true,
+     *    description="Choose model",
+     *    @OA\JsonContent(
+     *       required={},
+     *       @OA\Property(property="receiver_id", type="integer", example=2, description="Choose receiver_id or set bearer token to header"),
+     *       @OA\Property(property="date", type="string", example="", description="Can be: empty or 'today'.")
+     *    ),
+     * ),
+     * @OA\Response(
+     *    response=200,
+     *    description="Feedback array.",
+     * ),
+     * @OA\Response(
+     *    response=406,
+     *    description="Unauthenticated.",
+     * ),
+     * )
+     */
+
+    public function getFeedbackList(Request $request)
+    {
+        $feedback_list = null;
+
+        if ( empty($request->receiver_id) )
+        {
+            $token = get_token();
+            $receiver = token_auth( $token );
+            if ( !empty($receiver->id) )
+                $receiver_id = $receiver->id;
+            else
+                return $receiver;
+        }
+        else
+            $receiver_id = $request->receiver_id;
+
+        $i = 0;
+
+        if ($request->date == "today")
+            $feedbacks = Transactions::where('receiver_id', $receiver_id)->whereDate('created_at', Carbon::today())->get();
+        else
+            $feedbacks = Transactions::where('receiver_id', $receiver_id)->get();
+
+
+        foreach ( $feedbacks as $feedback ):
+            $feedback_list[$i]['feedback'] = $feedback['comment'];
+            $feedback_list[$i]['rating'] = $feedback['stars'];
+
+            $tipper = Tipper::where([ 'id' => $feedback['tipper_id'] ])->first();
+            if ( isset($tipper) ) {
+                $feedback_list[$i]['tipper']['first_name'] = $tipper['first_name'];
+                $feedback_list[$i]['tipper']['last_name'] = $tipper['last_name'];
+                $feedback_list[$i]['tipper']['photo'] = $tipper['photo'];
+            }
+
+            $i += 1;
+        endforeach;
+
+        return response()->json($feedback_list, 200);
     }
 
 }
