@@ -59,7 +59,7 @@ Route::prefix('mobile')->group(function() {
     Route::post('forgotPassCheck', [AuthController::class, 'forgotPassCheckCode']);
     Route::post('forgotPassConfirm', [AuthController::class, 'forgotPassConfirmAPI']);
     Route::post('userTransactions', [AuthController::class, 'getUserTransactions']);
-    Route::post('groupList', [ApiController::class, 'groupList']);
+    Route::get('groupList', [ApiController::class, 'groupList']);
     Route::get('getNotifications', [ApiController::class, 'getNotifications']);
 
 });
