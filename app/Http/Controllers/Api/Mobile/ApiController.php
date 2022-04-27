@@ -48,9 +48,9 @@ class ApiController extends Controller
       foreach ( $list as $group ):
         $org = Organization::find($group->org_id);
         if ( !empty($org) ) {
-            $groupInfo[$i]['orgName'] = $org->name;
+            $groupInfo[$i]['org_name'] = $org->name;
             // group name
-            $groupInfo[$i]['groupName'] = $group->name;
+            $groupInfo[$i]['group_name'] = $group->name;
 
             // users
             $user_ids = null;
