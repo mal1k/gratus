@@ -1,0 +1,146 @@
+{
+	"info": {
+		"_postman_id": "1011e1b1-9942-47b5-a71d-86d37591ec0b",
+		"name": "Cards",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_uid": "17443764-1011e1b1-9942-47b5-a71d-86d37591ec0b"
+	},
+	"item": [
+		{
+			"name": "New card",
+			"id": "a04c7cbc-ec06-4fbf-92b1-cd334475629e",
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"customer_id\": \"cus_NOnQJPXA0WbbPX\",\n    \"card_data\": {\n        \"number\": 4242424242424242,\n        \"exp_month\": 12,\n        \"exp_year\": 2024,\n        \"cvc\": 123\n    }\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost/api/stripe/cards/new",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"path": [
+						"api",
+						"stripe",
+						"cards",
+						"new"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Set default payment method",
+			"id": "adcb4a67-8d78-4410-9693-336f110ac7cf",
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"customer_id\": \"cus_NOnQJPXA0WbbPX\",\n    \"payment_method\": \"card_1MdzvrFCW7iss8YKt7tri6Od\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost/api/stripe/cards/default",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"path": [
+						"api",
+						"stripe",
+						"cards",
+						"default"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Payment method list",
+			"id": "5652a00f-afa6-4b8f-bfbf-965a01bc632e",
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"customer_id\": \"cus_NOnQJPXA0WbbPX\",\n    \"type\": \"card\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost/api/stripe/cards/list",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"path": [
+						"api",
+						"stripe",
+						"cards",
+						"list"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Payment method remove",
+			"id": "64a89f82-347d-454f-a9db-35c191206e21",
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"customer_id\": \"cus_NOnQJPXA0WbbPX\",\n    \"payment_method_id\": \"card_1MdzvrFCW7iss8YKt7tri6Od\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost/api/stripe/cards/remove",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"path": [
+						"api",
+						"stripe",
+						"cards",
+						"remove"
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}

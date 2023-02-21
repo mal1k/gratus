@@ -1,0 +1,90 @@
+{
+	"info": {
+		"_postman_id": "01dfb6e1-de2c-46bd-8105-cdcc5b420e2a",
+		"name": "Customer",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_uid": "17443764-01dfb6e1-de2c-46bd-8105-cdcc5b420e2a"
+	},
+	"item": [
+		{
+			"name": "Create customer",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "d8f8d76f-26cb-4e85-a7bc-7d49acf53d01",
+						"exec": [
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"id": "5dc6d02b-4708-4bee-9be4-01333f406f0f",
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"customer\": {\n        \"name\": \"testname\",\n        \"email\": \"example@gmail.com\",\n        \"phone\": \"+380671234567\",\n        \"model\": \"Tipper\"\n    }\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost/api/stripe/customer/create",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"path": [
+						"api",
+						"stripe",
+						"customer",
+						"create"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Balance",
+			"id": "a58d65b0-c914-427d-91b0-b22669170c3e",
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"customer_id\": \"cus_NOnQJPXA0WbbPX\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost/api/stripe/customer/balance",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"path": [
+						"api",
+						"stripe",
+						"customer",
+						"balance"
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}
